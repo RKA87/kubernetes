@@ -11,6 +11,7 @@ metadata:
 spec:
   containers:
     - name: frontend
-      image: rakeshakuluru/frontend:1.1.1 # this is from docker hub repository
+    # this is from docker hub repository
+      image: rakeshakuluru/frontend:1.1.1 
       # image: <account-id>.dkr.ecr.<region>.amazonaws.com/frontend:1.1.1 # this is from ECR repository
       
