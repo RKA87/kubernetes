@@ -9,11 +9,8 @@ metadata:
     env: dev
 spec:
   containers:
-    - name: frontend
-      image: rakeshakuluru/frontend:1.1.1
-      ports:
-        - containerPort: 8080
     - name: nginx
-      image: nginx:latest
-      ports:
-        - containerPort: 80
+      image: rakeshakuluru/frontend:1.1.1
+
+    - name: almalinux
+      image: almalinux:latest
