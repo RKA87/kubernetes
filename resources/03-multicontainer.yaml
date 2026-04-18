@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: roboshop
-  name: frontend
+  name: multicontainer-setup
   labels:
     app: frontend
     project: roboshop
