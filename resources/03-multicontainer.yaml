@@ -14,3 +14,4 @@ spec:
 
     - name: almalinux
       image: almalinux:latest
+      command: ["/bin/sleep", "1000"]
