@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    app: frontend
+    project: roboshop
+    env: dev
+    deployment: k8s-pod
+spec:
+  containers:
+    - name: frontend
+      image: rakeshakuluru/frontend:1.1.1 # this is from docker hub repository
+      # image: <account-id>.dkr.ecr.<region>.amazonaws.com/frontend:1.1.1 # this is from ECR repository
+      
