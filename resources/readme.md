@@ -20,7 +20,7 @@ The Service gives you:
 
 Once service configured we can check the service endpoint status using simple command
 
-    kubectl get endpoints service-config-<pod_name> -n <namespace>
+    kubectl get endpoints <service_name>-n <namespace>
 
     Ex:
         kubectl get endpoints service-config-frontend -n roboshop
