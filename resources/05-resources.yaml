@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: roboshop
+  name: resources
+  labels:
+    app: resources
+    proj: roboshop
+    env: dev
+  annotations:
+    jenkinsURL: "https://roboshop.jenkins.com"
+    ansibleURL: "https://roboshop.ansible.com"
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+      - containerPort: 80
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
