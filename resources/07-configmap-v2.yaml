@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: nginx-config
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+data:
+  course: joindevops
+  name: siva
+  duration: 15hours
+  mapping: nginx-config

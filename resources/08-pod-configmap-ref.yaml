@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: roboshop
+  name: pod-configmap-ref
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  containers:
+  - name: nginx-configmap-ref
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    envFrom:
+    - configMapRef:
+        name: nginx-config
