@@ -16,5 +16,5 @@ The Service gives you:
 
     # Load balancing if you scale to multiple pods
 
-# So yes, you need a Service to reliably communicate with your frontend pod within the cluster. And to expose it outside the cluster (to users), you'd need a NodePort, LoadBalancer, or Ingress type service instead of ClusterIP.
+* So yes, you need a Service to reliably communicate with your frontend pod within the cluster. And to expose it outside the cluster (to users), you'd need a NodePort, LoadBalancer, or Ingress type service instead of ClusterIP.
 
