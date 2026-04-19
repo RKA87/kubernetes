@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ReplicaSet
+metadata:
+  name: replicaset-example
+  labels:
+    proj: roboshop
+    env: dev
+    purpose: replicaset-purpose
+spec:  
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        app: frontend
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+      - name: frontend
+        image: nginx:latest
