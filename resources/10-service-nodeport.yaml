@@ -12,7 +12,7 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      # Better not to assign the nodeport, let kubernetes assign it on own
+      # Better to assign the nodeport as a static so that you can allow the port 30001 traffic in EC2 Nodes Security Group Inbound rule
       nodePort: 30001 
   selector:
     proj: roboshop
