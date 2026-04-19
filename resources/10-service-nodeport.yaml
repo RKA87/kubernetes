@@ -16,4 +16,4 @@ spec:
   selector:
     proj: roboshop
     env: dev
-    deployment: kuberenetes
+    deployment: kubernetes
