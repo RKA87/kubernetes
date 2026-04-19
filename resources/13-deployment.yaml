@@ -7,6 +7,8 @@ metadata:
     proj: roboshop
     env: dev
     purpose: deployment-poc
+  annotations:
+    kubernetes.io/change-cause: moving to nginx 1.29
 spec:  
   replicas: 2
   selector:
@@ -25,6 +27,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: nginx:1.30.0
+          image: nginx:1.29
           ports:
             - containerPort: 80
