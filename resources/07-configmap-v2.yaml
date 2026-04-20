@@ -7,6 +7,8 @@ metadata:
     proj: roboshop
     env: dev
     deployment: kubernetes
+# using "data"; this is for environment setup variables for your pod
+# you just refer this configmap file in env section under pod
 data:
   course: joindevops
   name: siva

@@ -6,8 +6,8 @@ metadata:
   labels:
     proj: roboshop
     env: dev
-    tier: db
     deployment: kubernetes
+    tier: db   
 spec:
   replicas: 1
   selector:
