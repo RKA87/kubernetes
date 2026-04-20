@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: mongodb-deployment
+  labels:
+    proj: roboshop
+    env: dev
+    tier: db
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      tier: db
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        tier: db
+    spec:
+      containers:
+      - name: mongodb
+        image: rakeshakuluru/mongodb:1.1.1
+        ports:
+        - containerPort: 27017
+      #   volumeMounts:
+      #   - name: mongodb-storage
+      #     mountPath: /data/db
+      # volumes:
+      # - name: mongodb-storage
+      #   persistentVolumeClaim:
+      #     claimName: mongodb-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb-service
+  labels:
+    proj: roboshop
+    env: dev
+    tier: db
+    deployment: kubernetes
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    tier: db
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
