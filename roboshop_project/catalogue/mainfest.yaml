@@ -10,8 +10,8 @@ metadata:
     deployment: kubernetes
     tier: backend
 data:
-    MONGO_URL: "mongodb://mongodb:27017/catalogue"
-    MONGO: "true"
+  MONGO: "true"
+  MONGO_URL: "mongodb://mongodb:27017/catalogue"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,7 +55,7 @@ spec:
             memory: "128Mi"
           limits:
             cpu: "100m"
-            memory: "128Mi
+            memory: "128Mi"
         readinessProbe:
           tcpSocket:
             port: 8080
@@ -70,9 +70,9 @@ spec:
           periodSeconds: 10
         envFrom:
         - configMapRef:
-            name: cart
+            name: catalogue
 ---
-apiVersion: v1
+apiVersionL: v1
 kind: Service
 metadata:
   namespace: roboshop
@@ -84,13 +84,12 @@ metadata:
     deployment: kubernetes
     tier: backend
 spec:
-  type: ClusterIP
   selector:
     proj: roboshop
     env: dev
     deployment: kubernetes
     tier: backend
   ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
