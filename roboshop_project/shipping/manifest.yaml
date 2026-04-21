@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: shipping
+  labels:
+    app: shipping
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+data:
+  CART_ENDPOINT: "cart:8080"
+  DB_HOST: "mysql"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: shipping
+  labels:
+    app: shipping
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      tier: backend
+  template:
+    metadata:
+      namespace: roboshop
+      name: shipping
+      labels:
+        app: shipping
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        tier: backend
+    spec:
+      containers:
+      - name: shipping
+        image: rakeshakuluru/shipping:1.1.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          failureThreshold: 2
+          periodSeconds: 10
+          initialDelaySeconds: 15
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 20
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 2
+          periodSeconds: 10
+        envFrom:
+        - configMapRef:
+            name: shipping
+---
+apiVersionL: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: shipping
+  labels:
+    app: shipping
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080

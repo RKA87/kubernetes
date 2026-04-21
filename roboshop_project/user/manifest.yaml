@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: user
+  labels:
+    app: user
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+data:
+  REDIS_URL: "redis://redis:6379"
+  MONGO_URL: "mongodb://mongodb:27017/users"
+  MONGO: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: user
+  labels:
+    app: user
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      tier: backend
+  template:
+    metadata:
+      namespace: roboshop
+      name: user
+      labels:
+        app: user
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        tier: backend
+    spec:
+      containers:
+      - name: user
+        image: rakeshakuluru/user:1.1.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          failureThreshold: 2
+          periodSeconds: 10
+          initialDelaySeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 2
+          periodSeconds: 10
+        envFrom:
+        - configMapRef:
+            name: user
+---
+apiVersionL: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: user
+  labels:
+    app: user
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080

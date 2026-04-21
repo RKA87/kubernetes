@@ -38,7 +38,13 @@ spec:
             memory: "128Mi"
           limits:
             cpu: "100m"
-            memory: "128Mi"        
+            memory: "128Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 27017
+          failureThreshold: 2
+          periodSeconds: 10     
 ---
 appVersion: v1
 kind: Service
