@@ -3,12 +3,6 @@ kind: Pod
 metadata:
   namespace: roboshop
   name: debug
-  labels:
-    app: debug
-    proj: roboshop
-    env: dev
-    deployment: kubernetes
-    tier: backend
 spec:
   containers:
     - name: debug
