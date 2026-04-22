@@ -34,11 +34,11 @@ spec:
         - containerPort: 27017
         resources:
           requests:
-            cpu: "100m"
-            memory: "128Mi"            
+            cpu: "200m"
+            memory: "256Mi"            
           limits:
-            cpu: "100m"
-            memory: "128Mi"            
+            cpu: "400m"
+            memory: "512Mi"            
         # livenessProbe:
         #   httpGet:
         #     path: /health
