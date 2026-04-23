@@ -13,7 +13,7 @@ data:
   RABBITMQ_DEFAULT_USER: roboshop
   RABBITMQ_DEFAULT_PASS: roboshop123
 ---
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: roboshop
@@ -44,7 +44,7 @@ spec:
       containers:
       - name: rabbitmq
         image: rakeshakuluru/rabbitmq:1.1.1
-        imagepullPolicy: Always
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: "100m"
@@ -58,8 +58,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
-          httpGet:
-            path: /health
+          tcpSocket:
             port: 5672
           failureThreshold: 2
           periodSeconds: 10
