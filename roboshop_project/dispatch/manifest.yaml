@@ -64,6 +64,7 @@ spec:
         livenessProbe:
           tcpSocket:
               port: 8080
+          initialDelaySeconds: 30
           failureThreshold: 2
           periodSeconds: 10
         envFrom:
