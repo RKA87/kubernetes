@@ -10,8 +10,9 @@ metadata:
     deployment: kubernetes
     tier: backend
 data:
-  RABBITMQ_DEFAULT_USER: roboshop
-  RABBITMQ_DEFAULT_PASS: roboshop123
+  AMQP_HOST=rabbitmq
+  AMQP_USER=roboshop
+  AMQP_PASS=roboshop123
 ---
 apiVersion: apps/v1
 kind: Deployment
