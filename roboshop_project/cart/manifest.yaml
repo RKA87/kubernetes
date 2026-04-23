@@ -73,7 +73,7 @@ spec:
         - configMapRef:
             name: cart
 ---
-apiVersionL: v1
+apiVersion: v1
 kind: Service
 metadata:
   namespace: roboshop
