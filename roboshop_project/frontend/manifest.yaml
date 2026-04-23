@@ -144,6 +144,7 @@ metadata:
     deployment: kubernetes
     tier: frontend
 spec:
+  type: LoadBalancer
   selector:
     proj: roboshop
     env: dev
