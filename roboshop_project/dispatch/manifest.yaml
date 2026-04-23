@@ -10,7 +10,7 @@ metadata:
     deployment: kubernetes
     tier: backend
 data:
-  AMQP_HOST: RABBITMQ-IP
+  AMQP_HOST: rabbitmq
   AMQP_USER: roboshop
   AMQP_PASS: roboshop123
 ---
