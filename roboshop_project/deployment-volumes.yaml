@@ -82,7 +82,7 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: frontend-configmap
+          name: frontend-configmap #ConfigMap name that specified above
 ---
 apiVersion: v1
 kind: Service
