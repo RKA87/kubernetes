@@ -42,3 +42,46 @@ spec:
       proj: roboshop
       env: dev
       deployment: kubernetes
+---
+# Finally consume the pvc inside pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend-ebs
+  labels:
+    app: ebs-demo
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        app: ebs-demo
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+      - name: frontend
+        image: rakeshakuluru/frontend:1.1.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: ebs-storage
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      nodeSelector:
+        topology.kubernetes.io/zone: us-east-1d
+      volumes:
+      - name: ebs-storage
+        persistentVolumeClaim:
+          claimName: ebs-pvc
