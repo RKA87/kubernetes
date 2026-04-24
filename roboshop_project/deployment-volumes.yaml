@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: frontend-configmap
+  labels:
+    app: webservice
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: frontend
+data:
+  nginx.conf: |
+      events {
+          worker_connections 1024;
+      }
+      http {
+          server {
+              listen 80;
+              location / {
+                  proxy_pass http://localhost:4200;
+              }
+          }
+      }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    app: webservice
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: frontend
+spec:  
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: webservice
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: roboshop/frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4200
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        readinessProbe:
+          tcpSocket: 
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: config-volume
+        configMap:
+          name: frontend-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: frontendsvc
+  labels:
+    app: webservice
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: frontend
+spec:
+#by default we will get cluster ip, we can configure nodeport & load balancer, these are subset of their services
+  type: LoadBalancer 
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
