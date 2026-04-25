@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: html-config
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+data:
+  index.html: |
+    <html><body><h1>Custom Page from ConfigMap</h1></body></html>
+---
+# First we need to create the storage class for dynamic provisioning
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-vol-dynamic-sc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+parameters:
+  type: gp3
+  encrypted: "true"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-vol-dynamic-claim
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ebs-vol-dynamic-sc
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebs-vol-dynamic-deployment
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        app: ebs-vol-dynamic-app
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+      - name: frontend
+        image: nginx:latest
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: ebs-vol-dynamic-storage
+          mountPath: /data
+        - name: html-config
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+      volumes:
+      - name: ebs-vol-dynamic-storage
+        persistentVolumeClaim:
+          claimName: ebs-vol-dynamic-claim
+      # Reference the ConfigMap here
+      - name: html-config
+        configMap:
+          name: html-config
