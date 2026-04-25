@@ -72,6 +72,7 @@ spec:
         volumeMounts:
         - name: ebs-vol-dynamic-storage
           mountPath: /data
+          # Reference the ConfigMap
         - name: html-config
           mountPath: /usr/share/nginx/html/index.html
           subPath: index.html
