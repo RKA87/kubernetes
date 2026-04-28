@@ -1,0 +1,103 @@
+# For static EFS - Prerequistes
+# Install EFS CSI Driver
+# IAM Role with EFS CSI Driver access policy
+# allow the security group traffic from EFS to Node Group instances
+# Now create the EFS Filesystem from storage team
+# Good to configure the PV, PVC & POD or Deployment
+
+# Create IAM Service account 
+# since we are attaching the aws iam role & policy manually,
+# we don't need to run the below command
+
+# <<<
+# eksctl create iamserviceaccount \
+#     --name efs-csi-controller-sa \
+#     --namespace kube-system \
+#     --cluster <YOUR_CLUSTER_NAME> \
+#     --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy \
+#     --approve \
+#     --role-only \
+#     --role-name AmazonEKS_EFS_CSI_DriverRole
+#   >>>
+
+# similar to EBS Static Concept, first create the PV of the EFS Filesystem to load
+apiVersion: v1
+kind: PersistantVolume
+metadata:
+  name: efs-pv-static
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: "" # Must match PVC's empty string
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0a8330c590e1ba326
+---
+# Now configure the PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: roboshop
+  name: efs-pvc-static
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "" #This is mandatory keep empty string for static
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Now Configure POD or Deployment using volumes & volumemounts
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+        - name: frontend
+          image: nginx:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: frontend-vol
+              mountPath: /data
+      volumes:
+        - name: frontend-vol
+          persistantVolumeClaim:
+            claimName: efs-pvc-static

@@ -1,0 +1,82 @@
+# For Dynamic EFS - Prerequistes
+# Install EFS CSI Driver
+# create IAM Role with EFS CSI Driver access policy using command iamserviceaccount command
+# allow the security group traffic from EFS to Node Group instances
+# Now create the EFS Filesystem from storage team
+# Good to configure the PV, PVC & POD or Deployment
+
+# similar to EBS Static Concept ;
+# first create the StorageClass of the EFS Filesystem to load
+apiVersion: v1
+kind: StorageClass
+metadata:
+  name: efs-dynamic-sc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+provisioner: efs.csi.aws.com
+parameters:
+  provisioningMode: efs-ap
+  fileSystemId: fs-0a74f07d59bf6910a #This EFS FS to be create manually or support team
+  directoryPerms: "700"
+  basePath: "/roboshop" # optional
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: roboshop
+  name: efs-dynamic-pvc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-dynamic-sc
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+        - name: frontend
+          image: nginx:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "200m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: frontend-vol
+              mountPath: /data
+      volumes:
+        - name: frontend-vol
+          persistentVolumeClaim:
+            claimName: efs-dynamic-pvc
