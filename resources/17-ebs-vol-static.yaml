@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: configmap
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: frontend-map
+data:
+  index.html: |
+    <html><body><h1>Custom Page from ConfigMap</h1></body></html>
+---
+# For static volume config, first configure the PV to load the disk vol details
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: pv-nginx
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: "" # Disables dynamic provisioning
+  csi:
+    driver: ebs.csi.aws.com
+    type: ext4  # e.g., disk.csi.azure.com or ://aws.com
+    volumeHandle: vol-052516247a4a4e158 # The ID of the existing storage backend resource
+---
+# second create the physical volume claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: roboshop
+  name: pvc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: pvc-nginx
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: pv
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+---
+# Now configure the pod or deployment as per configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    namespace: roboshop
+    name: deployment
+    labels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      tier: pvc-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        name: deployment
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      volumes:
+        - name: html-page
+          configMap:
+            name: configmap
+        - name: data-vol
+          persistentVolumeClaim:
+            claimName: pvc
+      containers:
+      - name: frontend
+        image: nginx
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "150m"
+            memory: "512Mi"
+        volumeMounts:
+          - name: data-vol
+            mountPath: /data
+          - name: html-page
+            mountPath: /usr/share/nginx/html
+            subPath: index.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: service
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: pvc-nginx-service
+spec:
+  type: ClusterIP
+  selector:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
