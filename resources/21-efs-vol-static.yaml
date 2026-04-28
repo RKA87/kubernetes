@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  capacity:
+    storage: 10Gi  # EFS has no fixed size, but K8s requires this field
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany  # EFS supports multiple pods reading/writing
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: "efs-sc"
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0a8330c590e1ba326
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: roboshop
+  name: efs-pvc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "efs-sc"
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: webinterface
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    containers:
+    - name: webinterface
+      image: nginx:latest
+      imagePullPolicy: Always
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "200m"
+          memory: "512Mi"
+      volumeMounts:
+        - name: webinterface-vol
+          mountPath: /data
+  volumes:
+    - name: webinterface-vol
+      persistentVolumeClaim:
+        claimName: efs-pvc
