@@ -1,0 +1,91 @@
+# First configure the headless service for statefulset 
+# This headless service is used to identify (peer discovery & stable network id) the other pods in the cluster to write the data 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb-headless
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: roboshop
+  name: mongodb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  serviceName: mongodb-headless #Must match the above specified service name
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  replicas: 3
+  minReadySeconds: 10
+  # Pod Definition
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+        - name: mongodb
+          image: rakeshakuluru/mongodb:1.1.1
+          imagePullPolicy: Always
+          # resources:
+          #   requests:
+          #     cpu: "250m"
+          #     memory: "256Mi"
+          #   limits:
+          #     cpu: "500m"
+          #     memory: "512Mi"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates: 
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: ebs-dynamic-sc
+        resources:
+          requests:
+            storage: 10Gi
+---
+# Below service is for load balancing purpose
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
