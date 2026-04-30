@@ -1,0 +1,97 @@
+# This headless service is used to identify (peer discovery & stable network id) the other pods in the cluster to write the data 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb-headless
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: db
+spec:
+  clusterIP: None
+  selector: 
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: db
+  ports:
+  - protocol: "TCP"
+    port: 27017
+    targetPort: 27017
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: roboshop
+  name: mongodb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: db
+spec:
+  serviceName: mongodb-headless
+  selector:
+      matchLabels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        tier: db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        tier: db
+    spec:
+      containers:
+        - name: mongodb
+          image: rakeshakuluru/mongodb:1.1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 27017
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:             # The dash goes here
+        name: mongo-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: ebs-dynamic-sc
+      resources:
+        requests:
+          storage: 10Gi
+---
+# This service is using for internal cluster
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: db
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: db
+  ports:
+    - protocol: "TCP"
+      port: 27017
+      targetPort: 27017
