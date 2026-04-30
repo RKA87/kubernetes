@@ -1,0 +1,170 @@
+# configMap 
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  namespace: roboshop
+  name: configmap
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+data:
+  index.html: |
+    <html><body><h1>Custom Page from ConfigMap</h1></body></html>
+---
+# EBS Dynamic Volume setup, first we need to create the storage class and then configure the deployment & statefulset deployments
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-dynamic-sc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+allowedTopologies:
+  - matchLabelExpressions:
+    - key: topology.kubernetes.io/zone
+      values:
+      - us-east-1a
+parameters:
+  type: gp3
+---
+# For Deployment we need to configure the PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: roboshop
+  name: ebs-dynamic-pvc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ebs-dynamic-sc
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+      - name: frontend
+        image: nginx:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+        volumeMounts:
+          - name: frontend-data
+            mountPath: /data
+          - name: configmap
+            mountPath: /usr/share/nginx/html/index.html
+            subPath: index.html
+    volumes:
+      - name: frontend-data
+        persistentVolumeClaim:
+          claimName: ebs-dynamic-pvc
+      - name: configmap
+        configMap:
+          name: configmap
+---
+# Now example for the Statefulset
+# For statefulset we don't need pvc, storage class itself will create the disk & pv, need to use that storageclassname in yaml
+# First create the headless service
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb-headless
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  clusterIP: None
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+  ports:
+    - protocol: "TCP"
+      port: 27107
+      targetPort: 27017
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: roboshop
+  name: mongodb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  replicas: 1
+  serviceName: mongodb-headless
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data
+      volumeClaimTemplates:
+        - metadata: 
+            name: mongodb-data
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: ebs-dynamic-sc
+            resources:
+              requests:
+                storage: "20Gi"
