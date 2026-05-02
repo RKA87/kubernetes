@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: NameSpace
-metadata:
-  name: roboshop
-  labels:
-    proj: robshop
-    env: dev
-    deployment: kubernetes
-    tier: namespace
