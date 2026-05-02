@@ -108,10 +108,15 @@ spec:
         - name: config-volume
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
+        - name: frontend-data
+          mountPath: /data
       volumes:
       - name: config-volume
         configMap:
           name: frontend-configmap
+      - name: frontend-data
+        persistentVolumeClaim:
+          claimName: ebs-dynamic-pvc
 ---
 apiVersion: v1
 kind: Service
