@@ -2,7 +2,7 @@ deployment:
   name: "testhelm"
   replicas: 1
   container_name: "frontend"
-  changeCause: "configure frontend using helm"
+  changeCause: "configuring frontend 1.29.8 using helm"
 
 
 image:
