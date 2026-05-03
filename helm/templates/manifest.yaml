@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: {{ .Values.deployment.name }}
+  labels:
+    app: webservices
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+  annotations:
+    kubernetes.io/change-cause: {{ .Values.deployment.changeCause }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+  template:
+    metadata:
+      labels:
+        app: webservices
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+    spec:
+      containers:
+      - name: {{ .Values.deployment.container_name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.service.containerPort }}
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        volumeMounts:
+        - name: html-config
+          mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: html-config
+        configMap:
+          name: {{ .Values.configmap.name }}

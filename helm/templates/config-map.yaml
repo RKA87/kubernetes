@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: {{ .Values.deployment.name }}
+  labels:
+    app: webservices
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+data:
+  index.html: |
+    <html>
+    <head>
+        <title>ROBOSHOP - {{ .Values.deployment.name }} </title>
+    </head>
+    <body>
+        <h1> Welcome to ROBOSHOP - {{ .Values.deployment.name }} </h1>
+    </body>
+    </html>
