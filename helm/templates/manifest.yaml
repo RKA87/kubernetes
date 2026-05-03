@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: {{ .Values.deployment.container_name }}
-        image: nginx:{{ .Values.image.versionTag}}
+        image: nginx:{{ .Values.image.versionTag }}
         imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.service.containerPort }}
