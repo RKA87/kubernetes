@@ -14,3 +14,18 @@ parameters:
 reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
+---
+apiVersoin: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: efs-dynamic-sc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: db
+provisioner: efs.csi.aws.com
+fileSystemId: fs-0c6d73565b2df4059
+directoryPerms: 770
+reclaimPolicy: Retain
+basePath: "/roboshop-efs-dynamic"
