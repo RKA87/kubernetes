@@ -41,6 +41,7 @@ spec:
         volumeMounts:
         - name: html-config
           mountPath: /usr/share/nginx/html/
+          subPath: index.html
       volumes:
       - name: html-config
         configMap:
