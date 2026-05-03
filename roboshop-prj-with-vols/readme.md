@@ -46,12 +46,12 @@ helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \
 
 Install the EFS
 
-helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver/ --force-update
 helm repo update
-helm install aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver \
+helm upgrade --install aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver \
   --namespace kube-system \
   --set controller.serviceAccount.create=false \
-  --set controller.serviceAccount.name=ebs-csi-controller-sa
+  --set controller.serviceAccount.name=efs-csi-controller-sa
 
 
 Step 3: Associate IRSA role
@@ -75,6 +75,8 @@ eksctl create iamserviceaccount \
   --role-name AmazonEKS_EFS_CSI_DriverRole
 
 
+Step 4: Verification
 
-Step 4: Verify
 kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-ebs-csi-driver
+
+kubectl get pods --namespace=kube-system -o wide | grep -E 'ebs|efs'
