@@ -30,6 +30,13 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        volumesMount:
+          - name: user-data
+            mountPath: /user/data
+      volumes:
+        - name: user-data
+          persistentVolumeClaim:
+          claimName: efs-dynamic-pvc
 ---
 apiVersion: v1
 kind: Service

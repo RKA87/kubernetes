@@ -30,6 +30,13 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: payment-data
+          mountPath: /payment/data
+      volumes:
+        - name: payment-data
+          persistentVolumeClaim:
+            claimName: payment-pv-claim
 ---
 apiVersion: v1
 kind: Service

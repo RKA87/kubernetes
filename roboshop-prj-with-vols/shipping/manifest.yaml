@@ -51,6 +51,13 @@ spec:
         env:
           - name: DB_PASS
             value: "roboshop@1"
+        volumeMounts:
+        - name: shipping-data
+          mountPath: /shipping/data
+      volumes:
+      - name: shipping-data
+        persistentVolumeClaim:
+          claimName: efs-dynamic-pvc
 ---
 apiVersion: v1
 kind: Service

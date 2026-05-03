@@ -45,13 +45,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: catalogue-configmap
-  #         volumeMounts:
-  #           - name: catalogue-data
-  #             mountPath: /data
-  #   volumes:
-  #     - name: catalogue-data
-  #       persistentVolumeClaim:
-  #         claimName: ebs-dynamic-pvc
+          volumeMounts:
+            - name: catalogue-data
+              mountPath: /catalogue/data
+      volumes:
+        - name: catalogue-data
+          persistentVolumeClaim:
+            claimName: efs-dynamic-pvc
 ---
 apiVersion: v1
 kind: Service
