@@ -1,5 +1,5 @@
 apiVersion: v2
 name: frontendhelm
-version: 0.0.1 #Chart Version
-appVersion: 1.1.1 #Application Version
-description: "configure frontend 1.29.8 using helm"
+version: 0.0.2 #Chart Version
+appVersion: 1.2.2 #Application Version
+description: "configure frontend latest using helm"

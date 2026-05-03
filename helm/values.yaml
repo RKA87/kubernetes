@@ -2,12 +2,12 @@ deployment:
   name: "nginx"
   replicas: 1
   container_name: "frontend"
-  changeCause: "configuring frontend 1.29.8 using helm"
+  changeCause: "configuring frontend latest using helm"
 
 
 image:
   # repository: ""
-  versionTag: "1.29.8"
+  versionTag: "latest"
 
 service:
   port: 80
