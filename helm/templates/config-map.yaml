@@ -12,9 +12,9 @@ data:
   index.html: |
     <html>
     <head>
-        <title>ROBOSHOP - {{ .Values.deployment.name }} </title>
+        <title> ROBOSHOP </title>
     </head>
     <body>
-        <h1> Welcome to ROBOSHOP - {{ .Values.deployment.name }} </h1>
+        <h1> Welcome to ROBOSHOP </h1>
     </body>
     </html>
