@@ -6,8 +6,8 @@ deployment:
 
 
 image:
-  repository: "rakeshakuluru/frontend"
-  tag: "1.1.1"
+  # repository: ""
+  versionTag: "1.29.8"
 
 service:
   port: 80
