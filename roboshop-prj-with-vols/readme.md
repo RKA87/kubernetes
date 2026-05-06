@@ -2,9 +2,9 @@ Pre-Requisites to configure roboshop project using Kubernets Tech
 =================================================================
 once EKS Cluster build/configured in aws, then run the below command to update the EKS Cluster
 
-eks update-kubeconfig 
+aws eks update-kubeconfig 
       --region <REGION> \
-      --cluster <CLUSTER_NAME> \
+      --name <CLUSTER_NAME> \
 
 
 Step 1: OIDC provider
