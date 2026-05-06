@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: roboshop
+  name: roboshop-trainee-role
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: k8s-admins
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "deployment", "statefulset"]
+    actions: ["get", "list", "watch"]

@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ConfigMap
+metadata:
+  namespace: kube-system
+  name: aws-auth
+
+data:
+  mapRoles: |
+  
+
+  mapUsers: |
+    - groups:
+        - roboshop-trainee
+      userarn:
+      username:
