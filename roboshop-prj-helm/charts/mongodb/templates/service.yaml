@@ -1,0 +1,43 @@
+# Headless Service for Statefulset deployment
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb-headless
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: mongodb
+spec:
+  clusterIP: None
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: mongodb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: mongodb
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

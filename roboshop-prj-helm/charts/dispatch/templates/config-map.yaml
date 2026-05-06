@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: roboshop
+  name: dispatch-configmap
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    tier: backend
+data:
+  AMQP_HOST: rabbitmq
+  AMQP_USER: roboshop
+  AMQP_PASS: roboshop123

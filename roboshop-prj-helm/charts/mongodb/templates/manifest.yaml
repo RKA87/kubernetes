@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: roboshop
+  name: {{ .Values.statefulset.name }}
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: mongodb
+spec:
+  serviceName: "{{ .Values.statefulset.name }}-headless"
+  replicas: {{ .Values.statefulset.replicas }}
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        app: mongodb
+    spec:
+      containers:
+        - name: {{ .Values.statefulset.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag}}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.statefulset.containerPort }}
+          volumeMounts:
+            - name: "{{ .Values.statefulset.name }}-data"
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: "{{ .Values.statefulset.name }}-data"
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: ebs-dynamic-sc
+        resources:
+          requests:
+            storage: 10Gi

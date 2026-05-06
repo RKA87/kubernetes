@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: {{ .Values.deployment.name }}
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: webservices
+spec:
+  selector:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: webservices
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 80

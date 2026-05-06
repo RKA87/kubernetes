@@ -1,0 +1,6 @@
+apiVersion: v2
+name: payment
+description: Roboshop Project-Microservices-Payment
+type: application
+version: 0.0.1
+appVersion: 1.0.0

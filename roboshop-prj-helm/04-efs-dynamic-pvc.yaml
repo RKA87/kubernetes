@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: roboshop
+  name: efs-dynamic-pvc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-dynamic-sc
+  resources:
+    requests:
+      storage: 10Gi

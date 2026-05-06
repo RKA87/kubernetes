@@ -1,0 +1,8 @@
+statefulset:
+  name: redis
+  replicas: 1
+  containerPort: 6379
+
+image:
+  repository: rakeshakuluru/redis
+  tag: 1.1.1

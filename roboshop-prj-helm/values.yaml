@@ -1,0 +1,10 @@
+# Placing Values will be override of every service using Helm
+# This will override only the variable required
+
+# Example Use Case, only those values to be pass through:
+
+# mysql:
+#   statefulset:
+#     replicas: 2
+#   image:
+#     tag: 1.2.2

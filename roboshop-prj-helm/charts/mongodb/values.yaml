@@ -1,0 +1,9 @@
+# sub-chart values.yaml which will be default values
+statefulset:
+  replicas: 1
+  name: mongodb
+  containerPort: 27017
+
+image:
+  repository: rakeshakuluru/mongodb
+  tag: 1.1.1

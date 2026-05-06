@@ -1,0 +1,41 @@
+apiVersion: v2
+name: roboshop
+description: "Roboshop project using helm - Umbrella Chart Design"
+version: 0.0.1
+appVersion: 1.0.0
+type: application
+
+dependencies:
+  - name: mysql
+    version: 0.0.1
+    repository: "file://charts/mysql"
+  - name: rabbitmq
+    version: 0.0.1
+    repository: "file://charts/rabbitmq"
+  - name: redis
+    version: 0.0.1
+    repository: "file://charts/redis"
+  - name: mongodb
+    version: 0.0.1
+    repository: "file://charts/mongodb"
+  - name: user
+    version: 0.0.1
+    repository: "file://charts/user"
+  - name: cart
+    version: 0.0.1
+    repository: "file://charts/cart"
+  - name: catalogue
+    version: 0.0.1
+    repository: "file://charts/catalogue"
+  - name: payment
+    version: 0.0.1
+    repository: "file://charts/payment"
+  - name: shipping
+    version: 0.0.1
+    repository: "file://charts/shipping"
+  - name: dispatch
+    version: 0.0.1
+    repository: "file://charts/dispatch"
+  - name: frontend
+    version: 0.0.1
+    repository: "file://charts/frontend"

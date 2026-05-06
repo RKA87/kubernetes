@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: {{ .Values.deployment.name }}
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: catalogue
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      app: catalogue
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        app: catalogue
+    spec:
+      containers:
+      - name: {{ .Values.deployment.name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.deployment.containerPort }}
+        envFrom:
+        - configMapRef:
+            name: "{{ .Values.deployment.name }}-configmap"
+        volumeMounts:
+        - name: "{{ .Values.deployment.name }}-data"
+          mountPath: /catalogue/data
+      volumes:
+      - name: "{{ .Values.deployment.name }}-data"
+        persistentVolumeClaim:
+          claimName: efs-dynamic-pvc

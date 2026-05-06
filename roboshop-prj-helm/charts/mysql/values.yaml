@@ -1,0 +1,9 @@
+# sub-chart values.yaml which will be default values
+statefulset:
+  replicas: 1
+  name: mysql
+  containerPort: 3306
+
+image:
+  repository: rakeshakuluru/mysql
+  tag: 1.1.1

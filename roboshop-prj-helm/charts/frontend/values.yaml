@@ -1,0 +1,8 @@
+deployment:
+  name: frontend
+  replicas: 1
+  containerPort: 80
+  
+image:
+  repository: roboshop/frontend
+  tag: latest

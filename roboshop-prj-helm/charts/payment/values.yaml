@@ -1,0 +1,9 @@
+# sub-chart values.yaml which will be default values
+deployment:
+  replicas: 1
+  name: payment
+  containerPort: 8080
+
+image:
+  repository: rakeshakuluru/payment
+  tag: 1.1.1
