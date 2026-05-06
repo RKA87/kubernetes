@@ -42,4 +42,4 @@ spec:
           claimName: efs-dynamic-pvc
       - name: "{{ .Values.deployment.name }}-configmap"
         configMap:
-          name: "{{ .Values.configmap.name }}"
+          name: "{{ .Values.deployment.name }}-configmap"
