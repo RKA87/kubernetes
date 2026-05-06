@@ -61,7 +61,7 @@ eksctl create iamserviceaccount \
   --namespace kube-system \
   --cluster <cluster_name> \
   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
-  --approve
+  --approve \
   --role-only \
   --role-name AmazonEKS_EBS_CSI_DriverRole
 
