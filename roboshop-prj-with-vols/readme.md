@@ -65,11 +65,17 @@ Note: when serviceAccount is set to false, we've alrady create the serviceAccoun
 
 IAM Service Account Creation and Association IRSA role
 
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.2.1/docs/install/iam_policy.json
+
+aws iam create-policy \
+    --policy-name <<AWSLoadBalancerControllerIAMPolicy>> \
+    --policy-document file://iam-policy.json
+
 eksctl create iamserviceaccount \
   --name aws-load-balancer-controller \
   --namespace kube-system \
   --cluster <CLUSTER_NAME> \
-  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AwsLoadBalancerControllerIAMPolicy \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/<<AwsLoadBalancerControllerIAMPolicy>> \
   --override-existing-serviceaccounts \
   --region us-east-1 \
   --approve \
