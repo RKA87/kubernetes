@@ -36,7 +36,7 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 
 Install the EBS 
-
+---------------
 helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
 helm repo update
 helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \
@@ -45,14 +45,35 @@ helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \
   --set controller.serviceAccount.name=ebs-csi-controller-sa
 
 Install the EFS
-
+---------------
 helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver/ --force-update
 helm repo update
 helm upgrade --install aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver \
   --namespace kube-system \
   --set controller.serviceAccount.create=false \
   --set controller.serviceAccount.name=efs-csi-controller-sa
+  
+Install the aws load balancer controller (ingress)
+--------------------------------------------------
+helm repo add eks https://aws.github.io/eks-charts
 
+helm repo update
+
+helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=<CLUSTER_NAME> --set serviceAccount.create=<false> --set serviceAccount.name=aws-load-balancer-controller
+
+Note: when serviceAccount is set to false, we've alrady create the serviceAccount. Its a best practice to configure the serviceAccount first and execute the install command with false option in serviceAccount
+
+IAM Service Account Creation and Association IRSA role
+
+eksctl create iamserviceaccount \
+  --name aws-load-balancer-controller \
+  --namespace kube-system \
+  --cluster <CLUSTER_NAME> \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AwsLoadBalancerControllerIAMPolicy \
+  --override-existing-serviceaccounts \
+  --region us-east-1 \
+  --approve \
+ <<Regarding the role k8s system will create the IAM Role Automatically>>
 
 Step 3: Associate IRSA role
 
