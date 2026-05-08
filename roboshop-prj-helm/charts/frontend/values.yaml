@@ -5,4 +5,4 @@ deployment:
   
 image:
   repository: roboshop/frontend
-  tag: 3.1.1
+  tag: 3.1.2
