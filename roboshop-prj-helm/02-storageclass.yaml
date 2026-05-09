@@ -24,6 +24,6 @@ metadata:
 provisioner: efs.csi.aws.com
 parameters:
   provisioningMode: efs-ap
-  fileSystemId: fs-09c1f969797cacd3e
+  fileSystemId: fs-0deefa2853cc1e312
   directoryPerms: "700"
 reclaimPolicy: Retain
