@@ -4,5 +4,5 @@ deployment:
   containerPort: 80
   
 image:
-  repository: roboshop/frontend
+  repository: rakeshakuluru/frontend
   tag: 3.1.2
