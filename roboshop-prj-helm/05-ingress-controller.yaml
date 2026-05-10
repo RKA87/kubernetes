@@ -19,7 +19,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /
+          - path: "/api" #api need to mention in this (new) ingress setup
             pathType: Prefix
             backend:
               service:
