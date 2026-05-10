@@ -1,0 +1,9 @@
+# Placing Values will be default to use by Helm
+deployment:
+  replicas: 1
+  name: debug
+  containerPort: 8080
+
+image:
+  repository: rakeshakuluru/debug
+  tag: 1.1.1

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: {{ .Values.deployment.name }}
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: kubernetes
+    app: debug
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      proj: roboshop
+      env: dev
+      deployment: kubernetes
+      app: debug
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: kubernetes
+        app: debug
+    spec:
+      containers:
+        - name: {{ .Values.deployment.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.deployment.containerPort }}
