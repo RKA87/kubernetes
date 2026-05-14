@@ -1,0 +1,86 @@
+apiversion: v1
+Kind: Service
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: webservice
+  template:
+    metadata:
+      name: frontend
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: k8s
+        tier: webservice
+    spec:
+      containers:
+        - name: frontend
+          image: rakeshakuluru/webservice:4.4.4
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration          
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  targetReference:
+    kind: Service
+    name: frontend
+  defaultConfiguration:
+    targetType: ip
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  parentRefs:
+    - name: aws-lb-gw-listeners
+  hostnames:
+    - "app4.rkak87.online"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+      - name: frontend
+        port: 80

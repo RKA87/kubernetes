@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-blue
+  labels:
+    proj: poc
+    env: sandbox
+    deployment: k8s
+    version: blue
+spec:
+  replicas: 
+  selector: 
+    matchLabels:
+      version: blue
+  template:
+    metadata:
+      labels:
+        proj: poc
+        env: sandbox
+        deployment: k8s
+        version: blue
+    spec:
+      containers:
+        - name: frontend
+          image: rakeshakuluru/blue:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80

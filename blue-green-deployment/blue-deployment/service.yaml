@@ -1,0 +1,17 @@
+apiVersion: V1
+kind: Service
+metadata:
+  name: main-service
+  labels:
+    proj: poc
+    env: sandbox
+    deployment: k8s
+    version: blue
+spec:
+  type: LoadBalancer
+  selector:
+    version: blue
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

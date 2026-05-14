@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: init-container
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: init-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: init-container
+  template:
+    metadata:
+      name: init-container
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: k8s
+        tier: init-container
+    spec:
+      serviceAccountName: mysql-secret-reader
+      initContainers:
+        - name: secret-reader
+          image: amazon/aws-cli
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+          args:
+            - |
+              # 1. Fetch the raw SecretString JSON from AWS Secrets Manager
+              RAW_SECRET=$(aws secretsmanager get-secret-value --secret-id roboshop/dev/mysql_root_password --query SecretString --output text)
+              
+              # 2. Parse the JSON using python3 instead of jq
+              echo "$RAW_SECRET" | python3 -c "import sys, json; print(json.loads(sys.stdin.read())['MYSQL_ROOT_PASSWORD'])" > /secrets/mysql-secret-reader.txt
+              
+              echo "Secret placed successfully"
+              echo "Secret placed successfully"
+          volumeMounts:
+            - name: secret-reader
+              mountPath: /secrets
+      containers:
+        - name: finalbuild
+          image: rakeshakuluru/mongodb:1.1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: secret-reader
+              mountPath: /secrets
+    volumes:
+      - name: secret-reader
+        emptyDir: {}

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: nginx-frontend-deployment
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: webservice
+  template:
+    metadata:
+      labels:
+        name: frontend
+        proj: roboshop
+        env: dev
+        deployment: k8s
+        tier: webservice
+    spec:
+      containers:
+        - name: frontend
+          image: rakeshakuluru/webservice:1.1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: frontend
+spec:
+  selector:
+    tier: webservice
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  namespace: roboshop
+  name: tg1-config
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  targetReference:
+    name: frontend # must match the Service.metadata.name as specified above
+    kind: Service
+  defaultConfiguration:
+    targetType: ip
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  namespace: roboshop
+  name: httproute
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: webservice
+spec:
+  parentRefs:
+  - name: aws-test-lb-gw-listeners # must match the Gateway.metadata.name as specified in Gateway
+  hostnames:
+  - "app1.rkak87.online"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: frontend # must match the Service.metadata.name as specified above
+      port: 80

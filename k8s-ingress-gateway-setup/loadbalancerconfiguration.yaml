@@ -1,0 +1,30 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: LoadBalancerConfiguration
+metadata:
+  name: aws-test-lb-gw-config
+  namespace: roboshop
+spec:
+  scheme: internet-facing
+  ipAddressType: ipv4
+
+  # Other settings specified below
+  
+  # loadBalancerAttributes:
+  #   - key: load_balancing.cross_zone.enabled
+  #     value: "true"
+  #   - key: access_logs.s3.enabled
+  #     value: "true"
+  #   - key: access_logs.s3.bucket
+  #     value: "my-k8s-alb-logs-bucket"
+  #   - key: deletion_protection.enabled
+  #     value: "true"
+  #   - key: idle_timeout.timeout_seconds
+  #     value: "60"
+
+  # subnets:
+  #   subnet:
+  #     - subnet-0123456789abcdef0
+  #     - subnet-0abcdef0123456789
+  # securityGroups:
+  #   securityGroups:
+  #     - sg-0123456789abcdef0

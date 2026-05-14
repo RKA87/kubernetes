@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: aws-lb-gw-listeners
+spec:
+  gatewayClassName: aws-lb-gw-class
+  infrastructure:
+    parameters:
+      group: gateway.k8s.aws
+      kind: LoadBalancerConfiguration
+      name: aws-lb-gw-config
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+         namespaces:
+          from: Same
+

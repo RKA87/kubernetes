@@ -1,0 +1,7 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: aws-lb-gw
+spec:
+  controllerName: gateway.k8s.aws/lb
+  description: "AWS LB using Gateway in K8S"

@@ -1,0 +1,16 @@
+apiVersion: V1
+kind: Service
+metadata:
+  name: preview-service
+  labels:
+    proj: poc
+    env: sandbox
+    deployment: k8s
+    version: green
+spec:
+  selector:
+    version: green
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

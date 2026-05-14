@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-green
+  labels:
+    proj: poc
+    env: sandbox
+    deployment: k8s
+    version: green
+spec:
+  replicas: 
+  selector: 
+    matchLabels:
+      version: green
+  template:
+    metadata:
+      labels:
+        proj: poc
+        env: sandbox
+        deployment: k8s
+        version: green
+    spec:
+      containers:
+        - name: frontend
+          image: rakeshakuluru/green:0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
