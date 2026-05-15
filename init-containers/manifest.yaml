@@ -54,3 +54,20 @@ spec:
       volumes:
         - name: secret-reader
           emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: roboshop
+  name: initcontainer-svc
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    tier: init-container
+spec:
+  selector:
+    tier: init-container
+  ports:
+    - port: 3306
+      targetPort: 3306
