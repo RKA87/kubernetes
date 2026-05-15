@@ -39,7 +39,6 @@ spec:
               echo "$RAW_SECRET" | python3 -c "import sys, json; print(json.loads(sys.stdin.read())['MYSQL_ROOT_PASSWORD'])" > /secrets/mysql-secret-reader.txt
               
               echo "Secret placed successfully"
-              echo "Secret placed successfully"
           volumeMounts:
             - name: secret-reader
               mountPath: /secrets
