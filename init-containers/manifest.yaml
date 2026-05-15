@@ -51,6 +51,6 @@ spec:
           volumeMounts:
             - name: secret-reader
               mountPath: /secrets
-    volumes:
-      - name: secret-reader
-        emptyDir: {}
+      volumes:
+        - name: secret-reader
+          emptyDir: {}
