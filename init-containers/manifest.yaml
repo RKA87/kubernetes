@@ -15,7 +15,6 @@ spec:
       tier: init-container
   template:
     metadata:
-      name: init-container
       labels:
         proj: roboshop
         env: dev
@@ -30,15 +29,11 @@ spec:
           command:
             - sh
             - -c
-          args:
             - |
-              # 1. Fetch the raw SecretString JSON from AWS Secrets Manager
-              RAW_SECRET=$(aws secretsmanager get-secret-value --secret-id roboshop/dev/mysql_root_password --query SecretString --output text)
-              
-              # 2. Parse the JSON using python3 instead of jq
-              echo "$RAW_SECRET" | python3 -c "import sys, json; print(json.loads(sys.stdin.read())['MYSQL_ROOT_PASSWORD'])" > /secrets/mysql-secret-reader.txt
-              
-              echo "Secret placed successfully"
+                aws secretsmanager get-secret-value --secret-id roboshop/dev/mysql_root_password \
+                      --query SecretString --output text | jq -r .MYSQL_ROOT_PASSWORD > /secrets/mysql-secret-reader.txt
+                echo "Secret placed successfully"
+                cat /secrets/mysql-secret-reader.txt
           volumeMounts:
             - name: secret-reader
               mountPath: /secrets
