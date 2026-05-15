@@ -32,7 +32,7 @@ spec:
             # FIXED: Removed the hyphen before "|" so YAML parses this as a single string block
             - |
                 # FIXED: Replaced 'jq' with native 'sed' string extraction because the official aws-cli image lacks jq
-                RAW_SECRET=$(aws secretsmanager get-secret-value --secret-id roboshop/dev/mysql_root_password --query SecretString --output text)
+                RAW_SECRET=$(aws secretsmanager get-secret-value --secret-id roboshop/dev/mysql_root_password-LC9wW5 --query SecretString --output text)
                 echo "$RAW_SECRET" | sed -e 's/.*"MYSQL_ROOT_PASSWORD":"\([^"]*\)".*/\1/' > /secrets/mysql-secret-reader.txt
                 echo "Secret placed successfully"
           volumeMounts:
