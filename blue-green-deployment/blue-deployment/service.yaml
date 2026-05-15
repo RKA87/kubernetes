@@ -7,13 +7,6 @@ metadata:
     env: sandbox
     deployment: k8s
     version: blue
-  annotations:
-    # Forces the AWS Load Balancer Controller to manage this service
-    service.beta.kubernetes.io/aws-load-balancer-type: "external"
-    # Bypasses the NodeGroup NodePort; routes directly to Pod IP on Port 80
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
-    # Ensures the NLB is public-facing (internet-accessible)
-    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
 spec:
   type: LoadBalancer
   selector:
