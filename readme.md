@@ -57,7 +57,7 @@ eksctl create iamserviceaccount \
   --region us-east-1 \
   --approve
 
-Note: <<Regarding the role k8s system will create the IAM Role Automatically>>
+Note: <<Regarding the role k8s system will create the IAM Role Automatically if not you can provide the role name using --role-name switch>>
 
 Step 4:
 -------
