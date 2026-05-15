@@ -110,3 +110,30 @@ kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-ebs-csi-driver
 kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-efs-csi-driver
 
 kubectl get pods --namespace kube-system -o wide
+
+
+Commands
+--------
+kubectl get pod -n <<namespace>> -o wide
+kubectl get svc -n <<kube-system>>
+
+Blue-Green Deployment Type
+
+For the Deployments we can set Zero downtime 
+
+patch the service from one to another based on the deployments, it is nothing relate to the eks cluster
+
+kubectl patch service main-service -p '{"spec":{"selector":{"version":"green"}}}' 
+
+kubectl patch deployment frontend-blue -p '{"spec":{"replicas":0}}'
+
+For EKS Cluster (Platform) Upgrades you require downtime however you can mention it is intermittent
+1. EKS platform, blue-nodegroup
+2. Upgrade platform to new version 1.35 keep the blue-ng running in 1.34
+3. Upgrade the eks add-on's too
+4. Create another nodegroup green 1.35(this is automatic, because eks in 1.35)
+4. cordon(scheduling disabled) blue nodes, then drain blue node slowly.. using the below command
+    kubectl drain node <<node_ip_dns>> --ignore-daemonsets --delete-emptydir-data
+
+when there are platform upgrades, we announce defnitely downtime. 30min - 6hours
+you face intermittent issues ->no downtime
