@@ -45,7 +45,7 @@ spec:
               mountPath: /secrets
       containers:
         - name: finalbuild
-          image: rakeshakuluru/mongodb:1.1.1
+          image: rakeshakuluru/mysql:2.2.2
           imagePullPolicy: Always
           ports:
             - containerPort: 27017
