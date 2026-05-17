@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    component: frontend
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      component: frontend
+  template:
+    metadata:
+      labels:
+        proj: roboshop
+        env: dev
+        deployment: k8s
+        component: frontend
+    spec:
+      topologySpreadConstraints: 
+      - maxSkew: 1
+        topologyKey: kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            component: frontend
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                    - frontend
+        # Below section can be ignore as we already 
+        # podAntiAffinity is doing the same thing in topologySpreadConstraints
+        # podAntiAffinity:
+        #   requiredDuringSchedulingIgnoredDuringExecution:
+        #     - labelSelector:
+        #         matchLabels:
+        #           component: frontend
+        #       topologyKey: kubernetes.io/hostname
+      containers:
+        - name: frontend
+          image: rakeshakuluru/frontend:1.1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80 
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  namespace: roboshop
+  name: frontend-pdb
+  labels:
+    proj: roboshop
+    env: dev
+    deployment: k8s
+    component: frontend
+spec:
+  minAvailable: "60%"
+  selector:
+    matchLabels:
+      component: frontend

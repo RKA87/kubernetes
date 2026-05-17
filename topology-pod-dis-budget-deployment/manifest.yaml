@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: roboshop
+  name: frontend
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      component: frontend
+  template:
+    metadata:
+      labels:
+        component: frontend
+        proj: roboshop
+        env: dev
+        deployment: k8s
+    spec:
+      topologySpreadConstraints:
+      # 1. Spread pods evenly across Availability Zones
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              component: frontend
+      # 2. Spread pods evenly across individual Nodes        
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              component: frontend
+      containers:
+        - name: frontend
+          image: rakeshakuluru/frontend:4.4.4
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  namespace: roboshop
+  name: frontend-pod-pdb
+spec:
+# you need to choose any one option below maxUnavailable or minAvailable  but not to choose both
+  # maxUnavailable: 1
+  minAvailable: 60%
+  selector:
+    matchLabels:
+      component: frontend
